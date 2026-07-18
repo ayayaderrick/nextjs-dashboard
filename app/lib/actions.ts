@@ -1,6 +1,8 @@
 "use server";
 
 import { neon } from "@neondatabase/serverless";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 
 const sql = neon(process.env.POSTGRES_URL!);
@@ -29,4 +31,7 @@ export const createInvoice = async (formData: FormData) => {
     INSERT INTO invoices (customer_id, amount, status, date)
     VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
   `;
+
+  revalidatePath("/dashboard/invoices");
+  redirect("/dashboard/invoices");
 };
